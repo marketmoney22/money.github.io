@@ -1,5 +1,4 @@
-
-const webhookURL = "https://discord.com/api/webhooks/1361973900434739312/tqXzDOdhU7p0Xo1AXXgTARqkWYVINAOBiYymdLbZCtP-dro6aylBg1BHoEFrivcsZbyL"; // 실제 주소로 교체
+const webhookURL = "https://discord.com/api/webhooks/1361973900434739312/tqXzDOdhU7p0Xo1AXXgTARqkWYVINAOBiYymdLbZCtP-dro6aylBg1BHoEFrivcsZbyL";
 
 let user = {
   nickname: null,
@@ -7,14 +6,16 @@ let user = {
 };
 
 function updateUI() {
-  document.getElementById("balance").innerText = user.balance;
+  const balanceEl = document.getElementById("balance");
   const userInfo = document.getElementById("user-info");
-  if (user.nickname) {
+
+  if (balanceEl) balanceEl.innerText = user.balance;
+  if (user.nickname && userInfo) {
     userInfo.innerHTML = `<span>${user.nickname}</span>`;
   }
 }
 
-// Discord 로그인 정보가 저장되어 있다면 불러오기
+// 로그인 사용자 정보 불러오기
 const discordUser = localStorage.getItem("discord_user");
 if (discordUser) {
   const discordData = JSON.parse(discordUser);
@@ -22,13 +23,76 @@ if (discordUser) {
   updateUI();
 }
 
+// 로그인 시작
 function loginWithDiscord() {
   const clientId = "1367887607702229064";
   const redirectUri = "https://marketmoney22.github.io/callback.html";
-  const scope = "identify email";
-  const oauthUrl = "https://discord.com/oauth2/authorize?client_id=1367887607702229064&response_type=code&redirect_uri=https%3A%2F%2Fmarketmoney22.github.io%2Fcallback.html&scope=identify+email";
+  const scope = "identify";
+  const oauthUrl =
+    `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}`;
   window.location.href = oauthUrl;
 }
+
+// 디스코드 로그인 처리 (callback.html에서만 실행)
+async function handleDiscordCallback() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get("code");
+  const currentPage = window.location.pathname;
+
+  if (!code || !currentPage.includes("callback.html")) return;
+
+  const clientId = "1367887607702229064";
+  const clientSecret = "YOUR_CLIENT_SECRET"; // ⚠️ 실제 서버 필요
+  const redirectUri = "https://marketmoney22.github.io/callback.html";
+
+  try {
+    const params = new URLSearchParams();
+    params.append("client_id", clientId);
+    params.append("client_secret", clientSecret);
+    params.append("grant_type", "authorization_code");
+    params.append("code", code);
+    params.append("redirect_uri", redirectUri);
+    params.append("scope", "identify");
+
+    const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params
+    });
+    const tokenData = await tokenRes.json();
+
+    const userRes = await fetch("https://discord.com/api/users/@me", {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
+    });
+    const userData = await userRes.json();
+
+    const discordUser = {
+      id: userData.id,
+      username: userData.username,
+      discriminator: userData.discriminator,
+      avatar: userData.avatar
+    };
+
+    localStorage.setItem("discord_user", JSON.stringify(discordUser));
+
+    // 로그인 Webhook 전송
+    await fetch(webhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `🔐 로그인: ${discordUser.username}#${discordUser.discriminator} (${discordUser.id})`
+      })
+    });
+
+    window.location.href = "index.html";
+  } catch (error) {
+    alert("Discord 로그인 실패");
+    console.error(error);
+  }
+}
+
+// 호출
+handleDiscordCallback();
 
 function purchase(itemName) {
   if (!user.nickname) return alert("로그인이 필요합니다.");

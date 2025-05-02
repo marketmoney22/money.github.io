@@ -1,20 +1,28 @@
-
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>Discord 로그인 처리 중...</title></head>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Discord 로그인 처리</title>
+</head>
 <body>
-<script>
-const code = new URLSearchParams(window.location.search).get("code");
+  <h2>로그인 처리 중...</h2>
+  <script>
+    const clientId = "1367887607702229064";
+    const clientSecret = "클라이언트_시크릿"; // 서버가 없기 때문에 넣기 어려움
+    const redirectUri = "https://marketmoney22.github.io/callback.html";
 
-if (!code) {{
-  document.body.innerHTML = "❌ 로그인 실패 (code 없음)";
-}} else {{
-  // 토큰 요청
-  fetch("https://marketmoney22.github.io/exchange_token.json") // GitHub Pages에서는 서버 없이 할 수 없으므로 대체 필요
-    .then(() => {{
-      alert("⚠️ 실제 토큰 교환은 서버에서 처리해야 합니다. GitHub Pages에서는 불가능합니다.");
-    }});
-}}
-</script>
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (!code) {
+      document.body.innerHTML = "인증 코드가 없습니다.";
+      throw new Error("No code found in URL");
+    }
+
+    // 브라우저에서 직접 token 요청은 CORS 때문에 실패할 수 있음 (권장 방식 아님)
+    // 이건 서버가 필요함
+    document.body.innerHTML = `
+      <p>⚠ Discord 로그인은 현재 서버가 없으면 완전히 작동할 수 없습니다.</p>
+      <p>토큰 요청을 위해 백엔드 서버가 필요합니다 (client_secret 노출 위험).</p>
+    `;
+  </script>
 </body>
 </html>

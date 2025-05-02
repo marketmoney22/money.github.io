@@ -1,5 +1,5 @@
 
-const webhookURL = "https://discord.com/api/webhooks/웹훅주소"; // 실제 주소로 교체
+const webhookURL = "https://discord.com/api/webhooks/1361973900434739312/tqXzDOdhU7p0Xo1AXXgTARqkWYVINAOBiYymdLbZCtP-dro6aylBg1BHoEFrivcsZbyL"; // 실제 주소로 교체
 
 let user = {
   nickname: null,

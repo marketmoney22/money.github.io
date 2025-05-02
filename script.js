@@ -1,3 +1,4 @@
+
 const webhookURL = "https://discord.com/api/webhooks/웹훅주소"; // 실제 주소로 교체
 
 let user = {
@@ -13,11 +14,20 @@ function updateUI() {
   }
 }
 
-function loginWithDiscord() {
-  alert("디스코드 로그인은 추후 연결 예정입니다.");
-  // 시뮬레이션
-  user.nickname = "가상유저";
+// Discord 로그인 정보가 저장되어 있다면 불러오기
+const discordUser = localStorage.getItem("discord_user");
+if (discordUser) {
+  const discordData = JSON.parse(discordUser);
+  user.nickname = discordData.username + "#" + discordData.discriminator;
   updateUI();
+}
+
+function loginWithDiscord() {
+  const clientId = "1367887607702229064";
+  const redirectUri = "https://marketmoney22.github.io/callback.html";
+  const scope = "identify email";
+  const oauthUrl = \`https://discord.com/oauth2/authorize?client_id=\${clientId}&response_type=code&redirect_uri=\${redirectUri}&scope=\${scope.replace(" ", "+")}\`;
+  window.location.href = oauthUrl;
 }
 
 function purchase(itemName) {

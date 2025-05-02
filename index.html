@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>스푸퍼 구매 사이트</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <h1>스푸퍼 구매</h1>
+      <div id="user-info">
+        <button onclick="loginWithDiscord()">Discord 로그인</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="products">
+    <div class="product">
+      <h2>ONIA SPOOFER</h2>
+      <p>고급 스푸퍼 - 탐지되지 않음</p>
+      <button onclick="purchase('ONIA SPOOFER')">구매하기</button>
+    </div>
+    <div class="product">
+      <h2>TEMP SPOOFER</h2>
+      <p>일회성 스푸퍼 - 감지됨</p>
+      <button onclick="purchase('TEMP SPOOFER')">구매하기</button>
+    </div>
+    <div class="product">
+      <h2>CLEANING ONLY</h2>
+      <p>스푸핑 없이 클리닝만</p>
+      <button onclick="purchase('CLEANING ONLY')">구매하기</button>
+    </div>
+  </section>
+
+  <section class="wallet">
+    <p>잔액: <span id="balance">0</span>원</p>
+    <button onclick="openRecharge()">충전하기</button>
+  </section>
+
+  <section class="recharge-modal" id="rechargeModal" style="display: none;">
+    <div class="modal-content">
+      <h3>충전 방법 선택</h3>
+      <button onclick="selectRecharge('bank')">무통장입금</button>
+      <button onclick="selectRecharge('gift')">문상 (준비중)</button>
+
+      <div id="bankForm" style="display:none;">
+        <input type="text" id="depositor" placeholder="입금자명" />
+        <input type="number" id="amount" placeholder="충전 금액" />
+        <button onclick="showAccount()">계좌 확인</button>
+        <p id="accountInfo" style="margin-top: 1rem;"></p>
+      </div>
+    </div>
+  </section>
+
+  <script src="login.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

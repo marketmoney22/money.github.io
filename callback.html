@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Discord 로그인 처리 중...</title></head>
+<body>
+<script>
+const code = new URLSearchParams(window.location.search).get("code");
+
+if (!code) {{
+  document.body.innerHTML = "❌ 로그인 실패 (code 없음)";
+}} else {{
+  // 토큰 요청
+  fetch("https://marketmoney22.github.io/exchange_token.json") // GitHub Pages에서는 서버 없이 할 수 없으므로 대체 필요
+    .then(() => {{
+      alert("⚠️ 실제 토큰 교환은 서버에서 처리해야 합니다. GitHub Pages에서는 불가능합니다.");
+    }});
+}}
+</script>
+</body>
+</html>

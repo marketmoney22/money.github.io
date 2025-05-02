@@ -3,12 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>스푸퍼 구매</title>
+  <title>스푸퍼 구매 사이트</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <h1>스푸퍼 구매</h1>
+    <div class="topbar">
+      <h1>스푸퍼 구매</h1>
+      <div id="user-info">
+        <button onclick="loginWithDiscord()">Discord 로그인</button>
+      </div>
+    </div>
   </header>
 
   <section class="products">
@@ -29,16 +34,27 @@
     </div>
   </section>
 
-  <section class="review">
-    <h3>구매 후기 작성</h3>
-    <textarea id="reviewText" placeholder="후기를 입력하세요."></textarea>
-    <button onclick="submitReview()">후기 제출</button>
+  <section class="wallet">
+    <p>잔액: <span id="balance">0</span>원</p>
+    <button onclick="openRecharge()">충전하기</button>
   </section>
 
-  <footer>
-    <p>결제: 계좌 이체, 문상, 코인 (문의는 디스코드)</p>
-  </footer>
+  <section class="recharge-modal" id="rechargeModal" style="display: none;">
+    <div class="modal-content">
+      <h3>충전 방법 선택</h3>
+      <button onclick="selectRecharge('bank')">무통장입금</button>
+      <button onclick="selectRecharge('gift')">문상 (준비중)</button>
 
+      <div id="bankForm" style="display:none;">
+        <input type="text" id="depositor" placeholder="입금자명" />
+        <input type="number" id="amount" placeholder="충전 금액" />
+        <button onclick="showAccount()">계좌 확인</button>
+        <p id="accountInfo" style="margin-top: 1rem;"></p>
+      </div>
+    </div>
+  </section>
+
+  <script src="login.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

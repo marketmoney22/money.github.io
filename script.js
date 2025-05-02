@@ -1,30 +1,61 @@
-function sendToDiscord() {
-  const username = document.getElementById("username").value;
-  const item = document.getElementById("item").value;
-  const review = document.getElementById("review").value;
+// 장바구니에 상품을 추가하고, 구매가 완료되면 Discord 웹훅 알림을 보내는 코드
+document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', () => {
+        const productId = button.getAttribute('data-product-id');
+        const productName = button.parentElement.querySelector('h2').textContent;
+        alert(`${productName}이(가) 장바구니에 추가되었습니다.`);
 
-  const webhookURL = "https://discord.com/api/webhooks/1362050083058880583/BvftuxY3UprHSBPvhqGacp2s1nSZW5e-LX_fcAILIE2DOX_zuiXJIukejwyFcqlxhx4H"; // 여기에 웹훅 URL 넣어줘
+        // 디스코드 웹훅 알림
+        sendDiscordWebhook(`${productName}님이 ${productName}을 구매하셨습니다.`);
 
-  const data = {
-    embeds: [
-      {
-        title: "🛒 구매 로그",
-        color: 3447003,
-        fields: [
-          { name: "닉네임", value: username || "없음" },
-          { name: "구매 상품", value: item || "없음" },
-          { name: "구매 후기", value: review || "없음" }
-        ],
-        timestamp: new Date()
-      }
-    ]
-  };
+        // 구매 후 후기 작성 폼 보이기
+        document.getElementById('review-form').style.display = 'block';
+    });
+});
 
-  fetch(webhookURL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-    .then(() => alert("구매 정보가 디스코드로 전송되었습니다!"))
-    .catch(err => alert("전송 실패: " + err));
+// 디스코드 웹훅 전송 함수
+function sendDiscordWebhook(message) {
+    const webhookURL = 'https://discord.com/api/webhooks/your-webhook-url';
+    const payload = {
+        content: message
+    };
+
+    fetch(webhookURL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' }
+    }).then(response => response.json())
+      .then(data => console.log('웹훅 전송 성공!', data))
+      .catch(error => console.error('웹훅 전송 실패:', error));
+}
+
+// 구매 후기를 작성하고 제출하면 웹훅으로 전송하는 코드
+document.getElementById('submit-review').addEventListener('click', () => {
+    const reviewText = document.getElementById('review-text').value;
+    if (reviewText) {
+        // 후기를 웹훅으로 전송
+        sendReviewWebhook(`구매 후기가 작성되었습니다: "${reviewText}"`);
+        alert('후기가 제출되었습니다!');
+
+        // 폼을 숨기기
+        document.getElementById('review-form').style.display = 'none';
+    } else {
+        alert('후기를 작성해주세요!');
+    }
+});
+
+// 후기를 디스코드 웹훅으로 전송하는 함수
+function sendReviewWebhook(reviewMessage) {
+    const webhookURL = 'https://discord.com/api/webhooks/your-review-webhook-url';
+    const payload = {
+        content: reviewMessage
+    };
+
+    fetch(webhookURL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' }
+    }).then(response => response.json())
+      .then(data => console.log('후기 웹훅 전송 성공!', data))
+      .catch(error => console.error('후기 웹훅 전송 실패:', error));
 }

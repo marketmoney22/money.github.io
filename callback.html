@@ -7,22 +7,26 @@
 <body>
   <h2>로그인 처리 중...</h2>
   <script>
-    const clientId = "1367887607702229064";
-    const clientSecret = "클라이언트_시크릿"; // 서버가 없기 때문에 넣기 어려움
-    const redirectUri = "https://marketmoney22.github.io/callback.html";
-
     const code = new URLSearchParams(window.location.search).get("code");
     if (!code) {
-      document.body.innerHTML = "인증 코드가 없습니다.";
+      document.body.innerHTML = "<h3>❌ 인증 코드가 없습니다.</h3>";
       throw new Error("No code found in URL");
     }
 
-    // 브라우저에서 직접 token 요청은 CORS 때문에 실패할 수 있음 (권장 방식 아님)
-    // 이건 서버가 필요함
+    // 서버가 없기 때문에 실제 token 요청은 불가. 대신 유저에게 안내만.
     document.body.innerHTML = `
-      <p>⚠ Discord 로그인은 현재 서버가 없으면 완전히 작동할 수 없습니다.</p>
-      <p>토큰 요청을 위해 백엔드 서버가 필요합니다 (client_secret 노출 위험).</p>
+      <h3>✅ Discord 인증 코드 수신됨!</h3>
+      <p>Code: <code>${code}</code></p>
+      <p>⚠ 현재 서버가 없어 실제 로그인 처리는 되지 않지만,<br>
+      코드 수신은 성공했으며 로그인 시뮬레이션을 진행할 수 있습니다.</p>
+      <button onclick="simulateLogin()">로그인 시뮬레이션 계속</button>
     `;
+
+    function simulateLogin() {
+      // 임시 닉네임 저장 및 메인 페이지로 이동
+      localStorage.setItem("nickname", "디스코드유저#" + Math.floor(Math.random() * 10000));
+      window.location.href = "index.html";
+    }
   </script>
 </body>
 </html>

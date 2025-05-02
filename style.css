@@ -1,0 +1,23 @@
+body {
+  font-family: sans-serif;
+  padding: 30px;
+  background: #f0f0f0;
+}
+
+input, textarea {
+  display: block;
+  margin: 10px 0;
+  width: 300px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: royalblue;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
